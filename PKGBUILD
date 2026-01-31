@@ -1,5 +1,3 @@
-# Maintainer: envolution
-# Contributor: txtsd <aur.archlinux@ihavea.quest>
 # shellcheck shell=bash disable=SC2034,SC2154
 # ci|prebuild=setcommitid.sh,envset_aur_llamacpp_build_universal=true| https://github.com/envolution/aur/blob/main/maintain/build/llama.cpp-cuda/setcommitid.sh
 
@@ -43,6 +41,9 @@ source=(
 sha256sums=('66b400cafd0742e1d1bf47617f9c8eacd7ef1dbab0c07ca0badbaec962c2429d'
             '53fa70cfe40cb8a3ca432590e4f76561df0f129a31b121c9b4b34af0da7c4d87'
             '0377d08a07bda056785981d3352ccd2dbc0387c4836f91fb73e6b790d836620d')
+backup=(
+  etc/conf.d/llama.cpp
+)
 
 prepare() {
   ln -sf "${_pkgname}-${pkgver}" llama.cpp
@@ -60,7 +61,6 @@ build() {
     -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_INSTALL_PREFIX='/usr'
     -DBUILD_SHARED_LIBS=ON
-    -DLLAMA_CURL=ON
     -DLLAMA_BUILD_TESTS=OFF
     -DLLAMA_USE_SYSTEM_GGML=OFF
     -DGGML_ALL_WARNINGS=OFF
