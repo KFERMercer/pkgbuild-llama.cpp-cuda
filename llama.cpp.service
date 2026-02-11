@@ -8,6 +8,7 @@ EnvironmentFile=/etc/conf.d/llama.cpp
 ExecStart=/usr/bin/llama-server $LLAMA_ARGS
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target

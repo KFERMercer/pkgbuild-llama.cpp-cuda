@@ -1,9 +1,10 @@
-# Maintainer: envolution
+# Maintainer: pussyhut <pussyhut@icloud.com>
+# Contributor: envolution
 # Contributor: txtsd <aur.archlinux@ihavea.quest>
-# shellcheck shell=bash disable=SC2034,SC2154
+# shellcheck shell=bash source=/dev/null disable=SC2034,SC2154
 # ci|prebuild=setcommitid.sh,envset_aur_llamacpp_build_universal=true| https://github.com/envolution/aur/blob/main/maintain/build/llama.cpp-cuda/setcommitid.sh
 
-: ${aur_llamacpp_build_universal:=false}
+: "${aur_llamacpp_build_universal:=false}"
 
 pkgname=llama.cpp-cuda
 _pkgname="${pkgname%-cuda}"
@@ -12,7 +13,7 @@ pkgrel=1
 _build_number=7376
 _commit_id=380b4c9
 pkgdesc="Port of Facebook's LLaMA model in C/C++ (with NVIDIA CUDA optimizations)"
-arch=(x86_64 armv7h aarch64)
+arch=(x86_64 armv7h aarch64 loongarch64)
 url='https://github.com/ggerganov/llama.cpp'
 license=('MIT')
 depends=(
@@ -24,6 +25,7 @@ depends=(
 )
 makedepends=(
   cmake
+  cuda
 )
 optdepends=(
   'python-numpy: needed for convert_hf_to_gguf.py'
@@ -32,8 +34,8 @@ optdepends=(
   'python-pytorch: needed for convert_hf_to_gguf.py'
   'python-transformers: needed for convert_hf_to_gguf.py'
 )
-provides=(${_pkgname})
-conflicts=(${_pkgname} libggml ggml)
+provides=("${_pkgname}")
+conflicts=("${_pkgname}" libggml ggml)
 replaces=(llama.cpp-cuda-f16)
 source=(
   "${pkgname}-${pkgver}.tar.gz::https://github.com/ggml-org/llama.cpp/archive/refs/tags/${pkgver}.tar.gz"
@@ -42,7 +44,10 @@ source=(
 )
 sha256sums=('66b400cafd0742e1d1bf47617f9c8eacd7ef1dbab0c07ca0badbaec962c2429d'
             '53fa70cfe40cb8a3ca432590e4f76561df0f129a31b121c9b4b34af0da7c4d87'
-            '0377d08a07bda056785981d3352ccd2dbc0387c4836f91fb73e6b790d836620d')
+            '38c65c7a50f21fe5423a2034386f47983db49fadee4860caed3a49eee128c4c0')
+backup=(
+  etc/conf.d/llama.cpp
+)
 
 prepare() {
   ln -sf "${_pkgname}-${pkgver}" llama.cpp
@@ -60,7 +65,6 @@ build() {
     -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_INSTALL_PREFIX='/usr'
     -DBUILD_SHARED_LIBS=ON
-    -DLLAMA_CURL=ON
     -DLLAMA_BUILD_TESTS=OFF
     -DLLAMA_USE_SYSTEM_GGML=OFF
     -DGGML_ALL_WARNINGS=OFF
@@ -102,9 +106,8 @@ build() {
 package() {
   DESTDIR="${pkgdir}" cmake --install build
 
-  install -Dm644 "${_pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-
   install -Dm644 "llama.cpp.conf" "${pkgdir}/etc/conf.d/llama.cpp"
   install -Dm644 "llama.cpp.service" "${pkgdir}/usr/lib/systemd/system/llama.cpp.service"
+  install -Dm644 "${_pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
 # vim:set ts=2 sw=2 et:
