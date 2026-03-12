@@ -8,10 +8,10 @@
 
 pkgname=llama.cpp-cuda
 _pkgname="${pkgname%-cuda}"
-pkgver=b8245
+pkgver=b8281
 pkgrel=1
-_build_number=8245
-_commit_id=d417bc4
+_build_number=8281
+_commit_id=0cec84f
 pkgdesc="Port of Facebook's LLaMA model in C/C++ (with NVIDIA CUDA optimizations)"
 arch=(x86_64 armv7h aarch64 loongarch64)
 url='https://github.com/ggerganov/llama.cpp'
@@ -24,7 +24,8 @@ depends=(
   nvidia-utils
 )
 makedepends=(
-  cmake
+  'cmake>=2.8.8'
+  ninja
   cuda
 )
 optdepends=(
@@ -42,7 +43,7 @@ source=(
   llama.cpp.conf
   llama.cpp.service
 )
-sha256sums=('e8537349693f1ad55ca8f869d316ce23b131195423efe0115d837de4457ca58c'
+sha256sums=('a55e98df94c0d7e84a7442662001c81e629fb6ea3b1c3c60a58a1281dae97be0'
             '53fa70cfe40cb8a3ca432590e4f76561df0f129a31b121c9b4b34af0da7c4d87'
             '38c65c7a50f21fe5423a2034386f47983db49fadee4860caed3a49eee128c4c0')
 backup=(
@@ -60,6 +61,7 @@ build() {
   fi
 
   local _cmake_options=(
+    -G Ninja
     -B build
     -S "${_pkgname}"
     -DCMAKE_BUILD_TYPE=Release
